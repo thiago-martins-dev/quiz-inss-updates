@@ -5,25 +5,25 @@
       "latestHash": "0f02b1714d8fbb2b91bd22b9f33a580995c9ebde1db6f644dc215e02c8b337bc",
       "latestSnapshot": "snapshots/br-cf-1988/0f02b1714d8fbb2b91bd22b9f33a580995c9ebde1db6f644dc215e02c8b337bc.json",
       "sourceUrl": "https://www2.camara.leg.br/legin/fed/consti/1988/constituicao-1988-5-outubro-1988-322142-normaatualizada-pl.html",
-      "lastCheckedAt": "2026-07-19T04:22:41.502439+00:00"
+      "lastCheckedAt": "2026-07-19T04:23:38.326656+00:00"
     },
     "br-lei-8212-1991": {
       "latestHash": "5c1feb0ae312bec74ae2eba2d0ca7db1d1db75c80e846d251434660fea91b9b0",
       "latestSnapshot": "snapshots/br-lei-8212-1991/5c1feb0ae312bec74ae2eba2d0ca7db1d1db75c80e846d251434660fea91b9b0.json",
       "sourceUrl": "https://www2.camara.leg.br/legin/fed/lei/1991/lei-8212-24-julho-1991-363647-normaatualizada-pl.html",
-      "lastCheckedAt": "2026-07-19T04:22:43.265145+00:00"
+      "lastCheckedAt": "2026-07-19T04:23:39.890354+00:00"
     },
     "br-lei-8213-1991": {
       "latestHash": "ff5543e849d48124f5fbba0b0ceba26cb541a8907d76bbcfdc2b733d4b28fde5",
       "latestSnapshot": "snapshots/br-lei-8213-1991/ff5543e849d48124f5fbba0b0ceba26cb541a8907d76bbcfdc2b733d4b28fde5.json",
       "sourceUrl": "https://www2.camara.leg.br/legin/fed/lei/1991/lei-8213-24-julho-1991-363650-normaatualizada-pl.html",
-      "lastCheckedAt": "2026-07-19T04:22:45.436565+00:00"
+      "lastCheckedAt": "2026-07-19T04:23:41.641399+00:00"
     },
     "br-decreto-3048-1999": {
       "latestHash": "3d03a6d01e4543b361341ca74e9e21702aa39118fc9ac87d444ba41a393f6791",
       "latestSnapshot": "snapshots/br-decreto-3048-1999/3d03a6d01e4543b361341ca74e9e21702aa39118fc9ac87d444ba41a393f6791.json",
       "sourceUrl": "https://www2.camara.leg.br/legin/fed/decret/1999/decreto-3048-6-maio-1999-368532-normaatualizada-pe.html",
-      "lastCheckedAt": "2026-07-19T04:22:49.264048+00:00"
+      "lastCheckedAt": "2026-07-19T04:23:44.526220+00:00"
     }
   },
   "note": "Hashes serão preenchidos somente após coleta oficial bem-sucedida."
