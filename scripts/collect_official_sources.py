@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import time
 import urllib.error
 import urllib.request
@@ -47,7 +48,8 @@ def legal_text(raw: bytes, norm_id: str) -> str:
     parser.feed(raw.decode("utf-8", "replace"))
     text = normalize("".join(parser.parts))
     marker = IDENTITY_MARKERS[norm_id]
-    if marker.casefold() not in text.casefold():
+    identity_text = re.sub(r"\s+", " ", text).casefold()
+    if marker.casefold() not in identity_text:
         raise ValueError(f"blocked: conteúdo não corresponde à norma {norm_id}")
     return text
 
