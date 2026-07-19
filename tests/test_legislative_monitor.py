@@ -38,11 +38,11 @@ class MonitorTests(unittest.TestCase):
             elif content_id == 697:
                 legal = "baseLegal: 'Lei nº 8.213/1991', artigo: 'art. 16',"
             annulled = "anulada: true," if content_id >= 697 else ""
-            questions.append(f"Questao(id: {content_id}, {legal} {annulled})")
+            questions.append(f"Questao(\n  id: {content_id},\n  {legal}\n  {annulled}\n)")
         questions.append("...QuestoesExpansaoIncapacidadeInss.questoes")
         (app / "lib" / "banco_questoes.dart").write_text("\n".join(questions), encoding="utf-8")
         pending = [
-            f"_criarQuestao(id: {content_id}, baseLegal: 'Lei nº 8.213/1991', artigo: 'art. 59')"
+            f"_criarQuestao(\n  id: {content_id},\n  baseLegal: 'Lei nº 8.213/1991',\n  artigo: 'art. 59',\n)"
             for content_id in (2447, 2491, 2495)
         ]
         (app / "lib" / "questoes_expansao_incapacidade_inss.dart").write_text("\n".join(pending), encoding="utf-8")
