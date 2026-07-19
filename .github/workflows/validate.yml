@@ -1,0 +1,38 @@
+name: Validate update infrastructure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - name: Validate manifest rules
+        run: python scripts/validate_manifest.py
+      - name: Validate every JSON file
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = sorted(Path(".").rglob("*.json"))
+          for path in files:
+              with path.open("r", encoding="utf-8") as source:
+                  json.load(source)
+              print(f"JSON válido: {path}")
+          print(f"Total de arquivos JSON: {len(files)}")
+          PY

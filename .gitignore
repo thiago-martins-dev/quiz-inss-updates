@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Ambientes e credenciais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*token*
+*credential*
+
+# Temporários e backups
+*.tmp
+*.bak
+*.swp
+~*
+
+# Pacotes locais; preservar o marcador versionado
+packages/*
+!packages/.gitkeep

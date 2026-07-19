@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/thiago-martins-dev/quiz-inss-updates/main/schemas/manifest.schema.json",
+  "title": "Quiz INSS Update Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "channel",
+    "enabled",
+    "contentVersion",
+    "minimumAppVersion",
+    "publishedAt",
+    "checkIntervalHours",
+    "packages",
+    "message"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "channel": { "type": "string", "minLength": 1 },
+    "enabled": { "type": "boolean" },
+    "contentVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "minimumAppVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "publishedAt": { "type": "string", "format": "date-time" },
+    "checkIntervalHours": { "type": "integer", "minimum": 1, "maximum": 168 },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "version", "url", "sha256", "sizeBytes", "compression", "required", "description"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "sizeBytes": { "type": "integer", "minimum": 1 },
+          "compression": { "type": "string", "enum": ["none", "zip", "gzip"] },
+          "required": { "type": "boolean" },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pt-BR"],
+      "properties": { "pt-BR": { "type": "string", "minLength": 1 } }
+    }
+  }
+}

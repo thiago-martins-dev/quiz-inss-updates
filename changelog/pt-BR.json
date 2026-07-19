@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "date": "2026-07-18",
+  "title": "Servidor de atualizações criado",
+  "description": "Estrutura inicial para distribuição segura de novos conteúdos do Quiz INSS Premium.",
+  "items": [
+    "Manifesto remoto versionado",
+    "Validação automática",
+    "Estrutura preparada para pacotes com SHA-256",
+    "Nenhuma alteração aplicada ao aplicativo nesta etapa"
+  ]
+}

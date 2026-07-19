@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/thiago-martins-dev/quiz-inss-updates/main/schemas/content-package.schema.json",
+  "title": "Quiz INSS Content Package",
+  "description": "Envelope não executável para futuras atualizações de conteúdo. A validação detalhada dos campos de questões será definida após o mapeamento integral do modelo atual do aplicativo.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "safeValue": {
+      "anyOf": [
+        { "type": ["string", "number", "integer", "boolean", "null"] },
+        { "type": "array", "items": { "$ref": "#/$defs/safeValue" } },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "enum": ["script", "scripts", "command", "commands", "localPath", "localPaths", "binary", "binaryData"]
+            }
+          },
+          "additionalProperties": { "$ref": "#/$defs/safeValue" }
+        }
+      ]
+    }
+  },
+  "required": ["schemaVersion", "packageId", "packageType", "packageVersion", "createdAt", "minimumAppVersion", "operations"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "packageId": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9._-]+$" },
+    "packageType": { "type": "string", "enum": ["questions", "summaries", "legislation", "news", "mixed"] },
+    "packageVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "minimumAppVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "entity", "id", "payload"],
+        "properties": {
+          "action": { "type": "string", "enum": ["insert", "update", "deactivate"] },
+          "entity": { "type": "string", "enum": ["question", "summary", "legislation", "news"] },
+          "id": { "type": "string", "minLength": 1 },
+          "payload": {
+            "type": "object",
+            "description": "Somente dados JSON declarativos; scripts, comandos, caminhos locais e conteúdo binário embutido são proibidos.",
+            "$ref": "#/$defs/safeValue"
+          }
+        }
+      }
+    }
+  }
+}

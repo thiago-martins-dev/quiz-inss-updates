@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "channel": "stable",
+  "enabled": true,
+  "contentVersion": "1.0.0",
+  "minimumAppVersion": "1.0.0",
+  "publishedAt": "2026-07-18T22:20:01-03:00",
+  "checkIntervalHours": 24,
+  "packages": [],
+  "message": {
+    "pt-BR": "Estrutura inicial do servidor de atualizações do Quiz INSS Premium."
+  }
+}
