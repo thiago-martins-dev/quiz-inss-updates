@@ -7,6 +7,9 @@ permissions:
   contents: write
   issues: write
   actions: read
+concurrency:
+  group: quiz-inss-legislative-publication
+  cancel-in-progress: false
 jobs:
   monitor:
     runs-on: ubuntu-latest
@@ -25,36 +28,45 @@ jobs:
         run: python scripts/validate_manifest.py
       - working-directory: monitor
         run: python scripts/validate_legislative_monitor.py
-      - name: Run tests
+      - name: Run tests and publication dry-run
         working-directory: monitor
-        run: python -m unittest discover -s tests -v
+        run: |
+          python -m unittest discover -s tests -v
+          python scripts/publish_safe_update.py --dry-run --fixture tests/fixtures/safe_impact.json
       - name: Validate versioned legal dependencies
         working-directory: monitor
         run: python scripts/validate_legislative_monitor.py --require-dependencies
-      - name: Collect official sources and create baseline
+      - name: Collect official sources
         working-directory: monitor
         run: python scripts/collect_official_sources.py
       - name: Compare legal versions
         working-directory: monitor
         run: python scripts/compare_legal_versions.py
-      - name: Analyze legal impact and update report
+      - name: Analyze legal impact
         working-directory: monitor
         run: python scripts/analyze_legal_impact.py
       - name: Apply safety gate
         id: gate
         working-directory: monitor
         run: python scripts/workflow_gate.py
-      - name: Build safe candidate
+      - name: Build safe package
         if: steps.gate.outputs.status == 'safe_candidate'
         working-directory: monitor
         run: python scripts/build_safe_update_package.py
+      - name: Publish safe Release and manifest
+        if: steps.gate.outputs.status == 'safe_candidate'
+        working-directory: monitor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_release.py
       - name: Create or update review issue
         if: steps.gate.outputs.status == 'review_required'
         working-directory: monitor
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/manage_review_issue.py
-      - name: Upload technical artifacts
+      - name: Upload audit artifacts
+        if: always()
         uses: actions/upload-artifact@v6
         with:
           name: legislative-monitor-${{ github.run_id }}
@@ -63,17 +75,26 @@ jobs:
             monitor/impact/changes.json
             monitor/impact/latest_report.json
             monitor/candidate-package.json
+            monitor/quiz-inss-content-*.json
             monitor/snapshots/
             monitor/state/
           if-no-files-found: ignore
-      - name: Persist baseline and technical state only
+      - name: Persist new baseline only
+        if: steps.gate.outputs.status == 'baseline_created'
         working-directory: monitor
         run: |
-          git add snapshots state impact/latest_report.json
+          git add snapshots state/monitored_norms.json
           if git diff --cached --quiet; then exit 0; fi
-          allowed=$(git diff --cached --name-only | grep -Ev '^(snapshots/|state/|impact/latest_report.json$)' || true)
-          if [ -n "$allowed" ]; then echo "$allowed"; exit 1; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: atualiza baseline do monitor legislativo"
           git push origin main
+      - name: Confirm no persistent changes
+        if: steps.gate.outputs.status == 'no_changes'
+        working-directory: monitor
+        run: |
+          git diff --quiet -- snapshots state/monitored_norms.json manifest.json
+          echo "Nenhuma mudança legislativa persistível."
+      - name: Fail blocked execution after artifacts
+        if: steps.gate.outputs.status == 'blocked' || steps.gate.outputs.status == 'collection_failed'
+        run: exit 2

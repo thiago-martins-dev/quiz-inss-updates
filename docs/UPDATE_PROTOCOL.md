@@ -2,6 +2,12 @@
 
 Este documento descreve o fluxo futuro; o aplicativo ainda não implementa este protocolo.
 
+## Publicação no servidor
+
+O monitor consulta fontes diariamente, enquanto o aplicativo continuará consultando o manifesto em três janelas mensais. Uma mudança integralmente `SAFE_AUTOMATIC` gera um JSON UTF-8 não executável, com precondições, chaves idempotentes, hash lógico das operações e versão patch. A Release é criada e verificada antes de `manifest.json`; SHA-256 integral e tamanho ficam no manifesto. Se a atualização do manifesto falhar, a Release criada pela mesma execução é removida ou uma Issue operacional deve registrar a falha.
+
+O manifesto mantém até as dez versões mais recentes, ordenadas semanticamente e sem duplicidades. `no_changes`, `REVIEW_REQUIRED` e `BLOCKED` não incrementam versão. Artifacts operacionais e timestamps não geram commit.
+
 ## Fluxo transacional previsto
 
 1. O aplicativo consulta `manifest.json`.

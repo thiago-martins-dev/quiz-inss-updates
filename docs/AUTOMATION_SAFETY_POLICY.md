@@ -8,7 +8,7 @@ O sistema detecta e prepara atualizações, mas nunca inventa interpretação ju
 - Questão pendente permanece inelegível.
 - Referência inferida ou ambígua exige revisão.
 - Fonte sem HTTPS oficial é bloqueada.
-- Pacote candidato não é Release, não altera `manifest.json` e não fica acessível ao aplicativo.
+- Pacotes são JSON declarativo sem scripts, comandos, binários, APK, Dart ou JavaScript.
 - Nenhum segredo ou credencial é armazenado.
 
-`SAFE_AUTOMATIC` exige referência explícita, confiança máxima, norma ativa, dispositivo inequívoco e operação limitada a metadados, aviso de vigência ou desativação para estudo atual com histórico preservado. `REVIEW_REQUIRED` abre ou atualiza uma Issue deduplicada. `BLOCKED` encerra o workflow.
+`SAFE_AUTOMATIC` exige referência explícita, confiança máxima, norma ativa, dispositivo inequívoco e operação limitada a metadados, aviso de vigência ou desativação para estudo atual com histórico preservado. O pacote inclui `expectedCurrentState` sem gabarito e falha se o cliente futuro encontrar estado inesperado. `REVIEW_REQUIRED` fica em quarentena e abre ou atualiza Issue deduplicada. `BLOCKED` impede Release e manifesto e encerra o workflow com falha. A publicação não significa instalação: o cliente Flutter ainda não baixa nem aplica pacotes.

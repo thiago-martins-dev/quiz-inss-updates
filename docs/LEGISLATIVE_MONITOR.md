@@ -18,6 +18,6 @@ O primeiro conteúdo válido vira baseline versionada por SHA-256 e não gera mu
 
 ## Impacto, Issues e artifacts
 
-Mudanças são cruzadas com o índice. Revisões usam chave estável `normId + dispositivo + hash` em marcador invisível para atualizar uma única Issue. Apenas impactos integralmente `SAFE_AUTOMATIC` podem produzir pacote candidato como artifact. Publicação, Release e atualização de `manifest.json` permanecem desativadas.
+Mudanças são cruzadas com o índice proveniente do aplicativo no commit `e47e162197fb4fe9b52d5e6402da62d7333d4010`. Há 261 vínculos explícitos, 260 elegíveis e 446 itens `unresolved`. Revisões usam chave estável `normId + dispositivo + hash` para atualizar uma única Issue. Apenas impactos integralmente `SAFE_AUTOMATIC` podem produzir uma Release e, depois da verificação do asset, atualizar `manifest.json`.
 
-O bot pode persistir somente `snapshots/`, `state/` e `impact/latest_report.json`, sem commit vazio e sem force push.
+Execuções `no_changes` não persistem timestamps, `runId`, relatórios ou estado operacional; esses dados ficam no artifact. Baseline nova persiste somente snapshots e estado comparativo. O índice não é atualizado automaticamente quando o banco privado muda até existir integração segura entre os repositórios.

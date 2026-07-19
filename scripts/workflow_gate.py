@@ -10,5 +10,3 @@ if output:
         keys = sorted({item["issueKey"] for item in report.get("impacts", []) if item["risk"] == "REVIEW_REQUIRED"})
         stream.write(f"review_keys={','.join(keys)}\n")
 print(status)
-if status in ("blocked", "collection_failed"):
-    raise SystemExit(2)

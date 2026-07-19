@@ -97,7 +97,8 @@ def collect(opener=urllib.request.urlopen) -> dict:
             baseline = previous_hash is None
             if not snapshot_path.exists():
                 write_json(snapshot_path, {"schemaVersion": 1, "normId": norm["id"], "sourceUrl": norm["url"], "primarySource": norm["primarySource"], "collectedAt": utc_now(), "sha256": digest, "devices": devices, "normalizedContent": text})
-            state["norms"][norm["id"]] = {"latestHash": digest, "latestSnapshot": snapshot_path.relative_to(ROOT).as_posix(), "sourceUrl": norm["url"], "lastCheckedAt": utc_now()}
+            if previous_hash != digest:
+                state["norms"][norm["id"]] = {"latestHash": digest, "latestSnapshot": snapshot_path.relative_to(ROOT).as_posix(), "sourceUrl": norm["url"], "lastCheckedAt": utc_now()}
             run["norms"].append({"normId": norm["id"], "sourceUrl": norm["url"], "snapshot": snapshot_path.relative_to(ROOT).as_posix(), "currentHash": digest, "previousHash": previous_hash, "baselineCreated": baseline})
         except Exception as error:
             message = str(error)

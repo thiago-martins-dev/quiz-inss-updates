@@ -1,0 +1,17 @@
+{
+  "status": "safe_candidate",
+  "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "impacts": [{
+    "risk": "SAFE_AUTOMATIC",
+    "normId": "br-lei-8213-1991",
+    "device": "art. 15",
+    "oldHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "changeHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "documentSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "suggestedAction": "deactivate_current_study",
+    "contentId": 101,
+    "officialSource": "https://www2.camara.leg.br/legin/fed/lei/1991/lei-8213-24-julho-1991-363650-normaatualizada-pl.html",
+    "detectedAt": "2026-07-19T00:00:00+00:00",
+    "effectiveAt": null
+  }]
+}
