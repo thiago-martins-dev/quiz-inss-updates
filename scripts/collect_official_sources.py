@@ -6,9 +6,50 @@ import json
 import time
 import urllib.error
 import urllib.request
+from html.parser import HTMLParser
 from pathlib import Path
 
 from legislative_monitor import MAX_BYTES, ROOT, USER_AGENT, load_json, normalize, official_https, sha256, split_devices, utc_now, write_json
+
+IDENTITY_MARKERS = {
+    "br-cf-1988": "CONSTITUIÇÃO DA REPÚBLICA FEDERATIVA DO BRASIL",
+    "br-lei-8212-1991": "LEI Nº 8.212, DE 24 DE JULHO DE 1991",
+    "br-lei-8213-1991": "LEI Nº 8.213, DE 24 DE JULHO DE 1991",
+    "br-decreto-3048-1999": "DECRETO Nº 3.048, DE 6 DE MAIO DE 1999",
+}
+
+
+class VisibleTextParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts = []
+        self.hidden_depth = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "style"):
+            self.hidden_depth += 1
+        elif tag in ("p", "div", "br", "li", "h1", "h2", "h3", "tr"):
+            self.parts.append("\n")
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style") and self.hidden_depth:
+            self.hidden_depth -= 1
+        elif tag in ("p", "div", "li", "h1", "h2", "h3", "tr"):
+            self.parts.append("\n")
+
+    def handle_data(self, data):
+        if not self.hidden_depth:
+            self.parts.append(data)
+
+
+def legal_text(raw: bytes, norm_id: str) -> str:
+    parser = VisibleTextParser()
+    parser.feed(raw.decode("utf-8", "replace"))
+    text = normalize("".join(parser.parts))
+    marker = IDENTITY_MARKERS[norm_id]
+    if marker.casefold() not in text.casefold():
+        raise ValueError(f"blocked: conteúdo não corresponde à norma {norm_id}")
+    return text
 
 
 def fetch(url: str, attempts: int = 3, timeout: int = 20, opener=urllib.request.urlopen) -> bytes:
@@ -44,7 +85,7 @@ def collect(opener=urllib.request.urlopen) -> dict:
         if not norm["active"]: continue
         try:
             raw = fetch(norm["url"], opener=opener)
-            text = normalize(raw.decode("utf-8", "replace"))
+            text = legal_text(raw, norm["id"])
             digest = sha256(text)
             devices = split_devices(text)
             folder = ROOT / "snapshots" / norm["id"]

@@ -12,7 +12,7 @@ Vínculos explícitos são criados apenas quando norma e artigo são inequívoco
 
 ## Coleta, baseline e comparação
 
-A coleta exige HTTPS oficial, User-Agent identificável, timeout, limite de 8 MiB e no máximo três tentativas com backoff limitado. INLABS permanece desativado por autenticação.
+A coleta exige HTTPS oficial, User-Agent identificável, timeout, limite de 8 MiB e no máximo três tentativas com backoff limitado. INLABS permanece desativado por autenticação. Os textos consolidados iniciais vêm das páginas oficiais “Texto Atualizado” da Câmara dos Deputados; o coletor remove apenas marcação HTML técnica, exige um marcador inequívoco por norma e bloqueia conteúdo incompatível. O Planalto permanece no registro oficial, mas não é usado no baseline porque reinicia conexões originadas nos runners do GitHub Actions.
 
 O primeiro conteúdo válido vira baseline versionada por SHA-256 e não gera mudança, Issue ou pacote. Execuções futuras comparam documento e dispositivos. Whitespace, quebras e marcação técnica são normalizados; diferenças jurídicas não são descartadas.
 
