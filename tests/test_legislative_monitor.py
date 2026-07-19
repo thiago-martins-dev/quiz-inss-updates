@@ -32,11 +32,11 @@ class MonitorTests(unittest.TestCase):
         for content_id in range(1, 705):
             legal = ""
             if content_id == 1:
-                legal = "baseLegal: 'Lei nº 8.213/1991', artigo: 'art. 15',"
+                legal = "baseLegal: 'Lei nº 8.213/1991',\n  artigo: 'art. 15',"
             elif content_id == 2:
-                legal = "baseLegal: 'Lei nº 8.212/1991 e Lei nº 8.213/1991', artigo: 'art. 1',"
+                legal = "baseLegal: 'Lei nº 8.212/1991 e Lei nº 8.213/1991',\n  artigo: 'art. 1',"
             elif content_id == 697:
-                legal = "baseLegal: 'Lei nº 8.213/1991', artigo: 'art. 16',"
+                legal = "baseLegal: 'Lei nº 8.213/1991',\n  artigo: 'art. 16',"
             annulled = "anulada: true," if content_id >= 697 else ""
             questions.append(f"Questao(\n  id: {content_id},\n  {legal}\n  {annulled}\n)")
         questions.append("...QuestoesExpansaoIncapacidadeInss.questoes")
