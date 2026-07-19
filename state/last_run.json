@@ -1,1 +1,18 @@
-{"schemaVersion":1,"status":"never_run","startedAt":null,"finishedAt":null,"changes":0,"safeAutomatic":0,"reviewRequired":0,"blocked":0}
+{
+  "schemaVersion": 1,
+  "runId": "183c053711da8254",
+  "startedAt": "2026-07-19T04:22:49.376451+00:00",
+  "finishedAt": "2026-07-19T04:22:49.380832+00:00",
+  "sourceCommit": "b6921e1b00b1ae0e4ebf349bec2cc9b51c16b15f",
+  "appSourceCommit": "e47e162197fb4fe9b52d5e6402da62d7333d4010",
+  "normsChecked": 4,
+  "dependenciesLoaded": 261,
+  "changesDetected": 0,
+  "impactsDetected": 0,
+  "status": "baseline_created",
+  "errors": [],
+  "artifacts": [
+    "impact/changes.json"
+  ],
+  "impacts": []
+}
