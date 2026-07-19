@@ -1,0 +1,87 @@
+name: Monitor legislation
+on:
+  schedule:
+    - cron: "37 9 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  actions: read
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monitor
+        uses: actions/checkout@v7
+        with:
+          path: monitor
+      - name: Checkout public app read-only
+        uses: actions/checkout@v7
+        with:
+          repository: thiago-martins-dev/quiz-inss-app
+          path: quiz-inss-app
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Validate every JSON
+        working-directory: monitor
+        run: python -c "import json,pathlib; files=list(pathlib.Path('.').rglob('*.json')); [json.load(p.open(encoding='utf-8')) for p in files]; print(len(files))"
+      - working-directory: monitor
+        run: python scripts/validate_manifest.py
+      - working-directory: monitor
+        run: python scripts/validate_legislative_monitor.py
+      - name: Run tests
+        working-directory: monitor
+        run: python -m unittest discover -s tests -v
+      - name: Build legal dependencies
+        working-directory: monitor
+        run: python scripts/build_legal_dependencies.py --app ../quiz-inss-app
+      - name: Validate generated dependencies
+        working-directory: monitor
+        run: python scripts/validate_legislative_monitor.py --require-dependencies
+      - name: Collect official sources and create baseline
+        working-directory: monitor
+        run: python scripts/collect_official_sources.py
+      - name: Compare legal versions
+        working-directory: monitor
+        run: python scripts/compare_legal_versions.py
+      - name: Analyze legal impact and update report
+        working-directory: monitor
+        run: python scripts/analyze_legal_impact.py
+      - name: Apply safety gate
+        id: gate
+        working-directory: monitor
+        run: python scripts/workflow_gate.py
+      - name: Build safe candidate
+        if: steps.gate.outputs.status == 'safe_candidate'
+        working-directory: monitor
+        run: python scripts/build_safe_update_package.py
+      - name: Create or update review issue
+        if: steps.gate.outputs.status == 'review_required'
+        working-directory: monitor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/manage_review_issue.py
+      - name: Upload technical artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: legislative-monitor-${{ github.run_id }}
+          path: |
+            monitor/impact/legal_dependencies.json
+            monitor/impact/changes.json
+            monitor/impact/latest_report.json
+            monitor/candidate-package.json
+            monitor/snapshots/
+            monitor/state/
+          if-no-files-found: ignore
+      - name: Persist baseline and technical state only
+        working-directory: monitor
+        run: |
+          git add snapshots state impact/latest_report.json
+          if git diff --cached --quiet; then exit 0; fi
+          allowed=$(git diff --cached --name-only | grep -Ev '^(snapshots/|state/|impact/latest_report.json$)' || true)
+          if [ -n "$allowed" ]; then echo "$allowed"; exit 1; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: atualiza baseline do monitor legislativo"
+          git push origin main

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "Auditoria somente leitura do Quiz INSS Premium em 2026-07-18",
+  "norms": [
+    {"id":"br-cf-1988","type":"Constituição","number":null,"year":1988,"title":"Constituição da República Federativa do Brasil","urn":"urn:lex:br:federal:constituicao:1988-10-05;1988","url":"https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm","primarySource":"planalto","subjects":["seguridade social","administração pública"],"trackedDevices":["arts. 37, 40, 194 a 204"],"citationClass":"direct","active":true,"lastKnownVersion":null,"lastHash":null,"lastCheckedAt":null},
+    {"id":"br-lei-8212-1991","type":"Lei","number":"8.212","year":1991,"title":"Lei Orgânica da Seguridade Social - Custeio","urn":"urn:lex:br:federal:lei:1991-07-24;8212","url":"https://www.planalto.gov.br/ccivil_03/leis/l8212cons.htm","primarySource":"planalto","subjects":["custeio"],"trackedDevices":[],"citationClass":"direct","active":true,"lastKnownVersion":null,"lastHash":null,"lastCheckedAt":null},
+    {"id":"br-lei-8213-1991","type":"Lei","number":"8.213","year":1991,"title":"Planos de Benefícios da Previdência Social","urn":"urn:lex:br:federal:lei:1991-07-24;8213","url":"https://www.planalto.gov.br/ccivil_03/leis/l8213cons.htm","primarySource":"planalto","subjects":["benefícios do RGPS"],"trackedDevices":[],"citationClass":"direct","active":true,"lastKnownVersion":null,"lastHash":null,"lastCheckedAt":null},
+    {"id":"br-decreto-3048-1999","type":"Decreto","number":"3.048","year":1999,"title":"Regulamento da Previdência Social","urn":"urn:lex:br:federal:decreto:1999-05-06;3048","url":"https://www.planalto.gov.br/ccivil_03/decreto/d3048.htm","primarySource":"planalto","subjects":["previdência social"],"trackedDevices":[],"citationClass":"direct","active":true,"lastKnownVersion":null,"lastHash":null,"lastCheckedAt":null}
+  ],
+  "fundamentalNormsIdentified": [],
+  "humanReviewCandidates": ["Demais normas detectadas por texto livre precisam de consolidação de identidade e URL oficial antes da inclusão."]
+}

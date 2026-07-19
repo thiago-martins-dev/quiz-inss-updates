@@ -6,6 +6,8 @@ Este repositório não contém o código-fonte principal do aplicativo. O códig
 
 `https://raw.githubusercontent.com/thiago-martins-dev/quiz-inss-updates/main/manifest.json`
 
+O Monitor Legislativo diário reconstrói somente os metadados jurídicos das 707 questões de produção, acompanha inicialmente quatro normas oficiais e mantém baselines versionadas. A publicação automática permanece desativada: candidatos seguros são apenas artifacts internos do GitHub Actions e nenhum pacote chega ao aplicativo nesta etapa.
+
 ## Funcionamento previsto
 
 Os pacotes futuros serão publicados em GitHub Releases. Antes de qualquer download, o aplicativo verificará o manifesto, a compatibilidade de versão e os metadados. Cada pacote será validado por tamanho e SHA-256 e aplicado com backup e transação; qualquer falha deverá provocar rollback.

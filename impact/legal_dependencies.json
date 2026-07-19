@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-18T00:00:00Z",
+  "sourceRepository": "https://github.com/thiago-martins-dev/quiz-inss-app",
+  "sourceCommit": "e47e162197fb4fe9b52d5e6402da62d7333d4010",
+  "productionQuestionCount": 707,
+  "uniqueIdCount": 707,
+  "duplicateIdCount": 0,
+  "dependencies": [],
+  "unresolved": [],
+  "statistics": {"explicit": 0, "extracted": 0, "inferred": 0, "eligible": 0, "historical": 0, "unresolved": 707}
+}

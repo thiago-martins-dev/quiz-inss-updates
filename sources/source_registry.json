@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {"id":"normas-leg-br","name":"LexML / normas.leg.br","baseUrl":"https://normas.leg.br/","format":"HTML/XML","authentication":"none","enabled":true},
+    {"id":"senado-dados","name":"Dados Abertos do Senado","baseUrl":"https://legis.senado.leg.br/dadosabertos/","format":"XML/JSON","authentication":"none","enabled":true},
+    {"id":"camara-dados","name":"Dados Abertos da Câmara","baseUrl":"https://dadosabertos.camara.leg.br/","format":"JSON","authentication":"none","enabled":true},
+    {"id":"planalto","name":"Portal da Legislação do Planalto","baseUrl":"https://www.planalto.gov.br/legislacao/","format":"HTML","authentication":"none","enabled":true},
+    {"id":"inlabs","name":"INLABS / Imprensa Nacional","baseUrl":"https://inlabs.in.gov.br/","format":"ZIP/XML","authentication":"required","enabled":false,"disabledReason":"Exige autenticação; nenhuma credencial é armazenada."}
+  ]
+}
