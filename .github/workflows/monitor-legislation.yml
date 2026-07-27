@@ -95,6 +95,16 @@ jobs:
         run: |
           git diff --quiet -- snapshots state/monitored_norms.json manifest.json
           echo "Nenhuma mudança legislativa persistível."
-      - name: Fail blocked execution after artifacts
-        if: steps.gate.outputs.status == 'blocked' || steps.gate.outputs.status == 'collection_failed'
+      - name: Report temporary official-source outage
+        if: steps.gate.outputs.status == 'collection_failed'
+        run: |
+          echo "::warning title=Coleta legislativa temporariamente indisponível::As fontes oficiais não responderam após as tentativas configuradas. Nenhuma atualização foi publicada."
+          {
+            echo "## Coleta legislativa temporariamente indisponível"
+            echo
+            echo "As fontes oficiais não responderam após as tentativas configuradas."
+            echo "Por segurança, nenhuma atualização foi publicada. Os artefatos de auditoria foram preservados."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail genuinely blocked execution after artifacts
+        if: steps.gate.outputs.status == 'blocked'
         run: exit 2
