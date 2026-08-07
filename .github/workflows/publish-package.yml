@@ -29,7 +29,17 @@ jobs:
           git fetch origin main
           git checkout -B main origin/main
           initial_head="$(git rev-parse HEAD)"
-          package="$(find packages -maxdepth 1 -type f -name '*.json' | sort | tail -n 1)"
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            package="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" -- 'packages/*.json' | tail -n 1)"
+          else
+            package="$(python - <<'PY'
+          import json, pathlib
+          paths = list(pathlib.Path("packages").glob("*.json"))
+          paths.sort(key=lambda path: tuple(map(int, json.loads(path.read_text(encoding="utf-8"))["packageVersion"].split("."))))
+          print(paths[-1] if paths else "")
+          PY
+          )"
+          fi
           test -n "$package"
           eval "$(python - "$package" <<'PY'
           import hashlib, json, pathlib, shlex, sys
