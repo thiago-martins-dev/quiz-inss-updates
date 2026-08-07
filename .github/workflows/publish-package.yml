@@ -1,0 +1,82 @@
+name: Publish approved declarative package
+
+on:
+  push:
+    branches: [main]
+    paths: ["packages/*.json"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: production-package-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Validate, release and update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git fetch origin main
+          git checkout -B main origin/main
+          initial_head="$(git rev-parse HEAD)"
+          package="$(find packages -maxdepth 1 -type f -name '*.json' | sort | tail -n 1)"
+          test -n "$package"
+          eval "$(python - "$package" <<'PY'
+          import hashlib, json, pathlib, shlex, sys
+          path = pathlib.Path(sys.argv[1]); raw = path.read_bytes(); data = json.loads(raw)
+          required = {"schemaVersion", "packageId", "packageType", "packageVersion", "contentVersionFrom", "contentVersionTo", "minimumAppVersion", "sourceMonitorCommit", "sources", "operations", "integrity"}
+          if required - data.keys() or data["schemaVersion"] != 1 or data["packageType"] != "legal-content":
+              raise SystemExit("pacote incompleto ou incompativel")
+          if not data["operations"] or any(op.get("entity") != "question" or op.get("action") not in {"update", "deactivate"} or not isinstance(op.get("id"), int) or op.get("id", 0) <= 0 or op.get("preserveHistory") is not True for op in data["operations"]):
+              raise SystemExit("operacao nao suportada pelo aplicativo")
+          values = {"PACKAGE_ID":data["packageId"],"VERSION":data["packageVersion"],"FROM_VERSION":data["contentVersionFrom"],"TO_VERSION":data["contentVersionTo"],"MIN_APP":data["minimumAppVersion"],"SHA":hashlib.sha256(raw).hexdigest(),"SIZE":str(len(raw)),"PACKAGE_NAME":path.name}
+          for key, value in values.items(): print(f"{key}={shlex.quote(str(value))}")
+          PY
+          )"
+          current_version="$(python -c "import json; print(json.load(open('manifest.json', encoding='utf-8'))['contentVersion'])")"
+          test "$current_version" = "$FROM_VERSION"
+          tag="content-v${VERSION}"
+          release_created=false
+          rollback() { if [[ "$release_created" == true ]]; then gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true; fi; }
+          trap rollback ERR
+          if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$tag" "$package" --repo "$GITHUB_REPOSITORY" --title "Atualizacao de conteudo ${VERSION}" --notes "Pacote declarativo aprovado pelo safety gate." --target "$initial_head"
+            release_created=true
+          fi
+          asset_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/${PACKAGE_NAME}"
+          curl --fail --location --silent --show-error "$asset_url" --output /tmp/remote-package.json
+          test "$(wc -c < /tmp/remote-package.json | tr -d ' ')" = "$SIZE"
+          test "$(sha256sum /tmp/remote-package.json | cut -d' ' -f1)" = "$SHA"
+          python - "$asset_url" "$SHA" "$SIZE" "$PACKAGE_ID" "$VERSION" "$TO_VERSION" "$MIN_APP" <<'PY'
+          import datetime, json, pathlib, sys
+          url, sha, size, package_id, version, content_version, minimum = sys.argv[1:]
+          path=pathlib.Path("manifest.json"); manifest=json.loads(path.read_text(encoding="utf-8"))
+          matching=[p for p in manifest["packages"] if p["id"] == package_id]
+          if matching:
+              if matching[0]["sha256"] != sha or matching[0]["url"] != url: raise SystemExit("package ID duplicado divergente")
+          else:
+              manifest["contentVersion"]=content_version; manifest["minimumAppVersion"]=minimum
+              manifest["publishedAt"]=datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00","Z")
+              manifest["packages"].append({"id":package_id,"type":"legal-content","version":version,"url":url,"sha256":sha,"sizeBytes":int(size),"compression":"none","required":False,"description":"Atualizacao declarativa aprovada pelo safety gate."})
+              manifest["message"]["pt-BR"]="Nova atualizacao de conteudo validada disponivel."
+              path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          PY
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$initial_head"
+          if git diff --quiet -- manifest.json; then release_created=false; echo "Idempotencia confirmada."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "chore: publica atualizacao de conteudo ${VERSION}"
+          git push origin HEAD:main
+          release_created=false

@@ -1,0 +1,44 @@
+name: Validate public distribution
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Validate public JSON and boundaries
+        run: |
+          python - <<'PY'
+          import json, pathlib, re
+          forbidden = {"state", "snapshots", "sources", "impact", "quarantine", "scripts", "tests"}
+          present = {p.name for p in pathlib.Path(".").iterdir()} & forbidden
+          if present:
+              raise SystemExit(f"private paths in distribution: {sorted(present)}")
+          for path in pathlib.Path(".").rglob("*.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+          manifest = json.loads(pathlib.Path("manifest.json").read_text(encoding="utf-8"))
+          required = {"schemaVersion", "channel", "enabled", "contentVersion", "minimumAppVersion", "publishedAt", "checkIntervalHours", "packages", "message"}
+          if set(manifest) != required or manifest["schemaVersion"] != 1:
+              raise SystemExit("invalid manifest contract")
+          semver = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+          if not semver.fullmatch(manifest["contentVersion"]):
+              raise SystemExit("invalid content version")
+          ids = [package["id"] for package in manifest["packages"]]
+          if len(ids) != len(set(ids)):
+              raise SystemExit("duplicate package ID")
+          if any(not package["url"].startswith("https://github.com/thiago-martins-dev/quiz-inss-updates/releases/download/") for package in manifest["packages"]):
+              raise SystemExit("package URL outside production allowlist")
+          print("Public distribution valid")
+          PY

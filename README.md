@@ -1,51 +1,15 @@
 # Quiz INSS Updates
 
-Repositório público usado pela **TFM Software** para distribuir atualizações de conteúdo do Quiz INSS Premium.
+Distribuição pública de atualizações declarativas aprovadas do Quiz INSS Premium.
 
-Este repositório não contém o código-fonte principal do aplicativo. O código principal está no repositório [`quiz-inss-app`](https://github.com/thiago-martins-dev/quiz-inss-app). O manifesto público previsto está disponível em:
+O aplicativo consulta exclusivamente:
 
 `https://raw.githubusercontent.com/thiago-martins-dev/quiz-inss-updates/main/manifest.json`
 
-O Monitor Legislativo diário acompanha quatro normas oficiais e 261 vínculos explícitos, dos quais 260 são elegíveis; 446 referências permanecem em revisão. Somente impactos `SAFE_AUTOMATIC` independentes podem gerar Release JSON e atualizar o manifesto. O aplicativo ainda não baixa nem instala esses pacotes.
+Este repositório contém apenas manifesto, changelog, schemas públicos, páginas de
+suporte/privacidade, pacotes aprovados e automação pública de distribuição. O
+monitor legislativo, snapshots, estado, análise de impacto, quarentena e testes
+internos permanecem no engine privado.
 
-## Funcionamento previsto
-
-Os pacotes futuros serão publicados em GitHub Releases. Antes de qualquer download, o aplicativo verificará o manifesto, a compatibilidade de versão e os metadados. Cada pacote será validado por tamanho e SHA-256 e aplicado com backup e transação; qualquer falha deverá provocar rollback.
-
-Nenhum token será embutido no aplicativo. Este sistema não distribuirá atualizações executáveis, APKs ou código Dart. Ele servirá somente para conteúdo declarativo, como questões, resumos, legislação, notícias, correções e metadados.
-
-## Estrutura
-
-```text
-.
-├── .github/workflows/validate.yml
-├── changelog/pt-BR.json
-├── docs/UPDATE_PROTOCOL.md
-├── packages/.gitkeep
-├── schemas/
-│   ├── content-package.schema.json
-│   └── manifest.schema.json
-├── scripts/validate_manifest.py
-├── .gitignore
-├── LICENSE
-├── README.md
-└── manifest.json
-```
-
-## Segurança
-
-- O manifesto e os pacotes são públicos e não contêm credenciais.
-- Downloads futuros exigirão HTTPS, tamanho esperado e SHA-256 válido.
-- Pacotes serão apenas JSON declarativo e nunca executarão código ou comandos.
-- Aplicações locais futuras deverão usar backup, transação, idempotência e rollback.
-- Tokens do GitHub não serão armazenados no aplicativo.
-
-## Licenciamento e conteúdo de terceiros
-
-A licença MIT cobre os scripts, a estrutura e a documentação produzidos neste repositório. Conteúdos de provas, legislação comentada e materiais de terceiros não são automaticamente licenciados por ela e podem estar sujeitos aos respectivos direitos e termos de uso.
-
-## Status
-
-Publicação segura do servidor ativa para mudanças jurídicas reais; instalação no aplicativo ainda desativada.
-
-TFM Software
+Pacotes são JSON declarativo. APKs, código executável, tokens e credenciais não
+são distribuídos por este repositório.
